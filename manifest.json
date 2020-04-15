@@ -1,0 +1,28 @@
+{
+  "name": "Qiniu Kodo",
+  "version": "1.0.1",
+  "description": "简单好用的七牛文件上传工具，支持选择/拖拽/粘贴上传图片，支持多空间管理，支持浏览历史记录",
+  "permissions": [
+    "storage",
+    "notifications",
+    "clipboardWrite",
+    "clipboardRead"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_icon": "images/logo128.png",
+    "default_title": "Qiniu Kodo"
+  },
+  "icons": {
+    "16": "images/logo16.png",
+    "32": "images/logo32.png",
+    "48": "images/logo48.png",
+    "128": "images/logo128.png"
+  },
+  "manifest_version": 2
+}
