@@ -250,6 +250,7 @@ let kodo = {
 $(() => {
   if (keys.length < 1) {
     alert('请先设置密钥');
+    chrome.tabs.create({ url: chrome.extension.getURL('option.html') });
   }
 
   // 前往 option.html

@@ -75,6 +75,7 @@ function renderKeys() {
 }
 
 function removeItem(timestamp) {
+  let storageData = localStorage.kodo ? JSON.parse(localStorage.kodo) : [];
   for (let i = 0; i < storageData.length; i++) {
     if (timestamp == storageData[i].date) {
       storageData.splice(i, 1);
