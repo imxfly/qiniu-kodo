@@ -5,20 +5,30 @@
   <title>Qiniu Kodo</title>
   <meta http-equiv="content-type" content="text/html;charset=utf-8">
   <link type="text/css" href="css/normalize.min.css" rel="stylesheet">
+  <link type="text/css" href="css/common.css" rel="stylesheet">
   <link type="text/css" href="css/option.css" rel="stylesheet">
 </head>
 
 <body>
+  <div class="loader-wrap">
+    <div class="line-scale">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
   <div class="container">
     <div id="tips_wrap">
       <div class="tips">
         <ul>
           <li><span class="emoji">❤️</span>喜欢这个扩展程序? &nbsp;
-            <a href="https://chrome.google.com/webstore/detail/qiniu-kodo/bolbippiiidndpgbljehocikgcepghja/reviews"
+            <a class="point" href="https://chrome.google.com/webstore/detail/qiniu-kodo/bolbippiiidndpgbljehocikgcepghja/reviews"
               target="_blank">欢迎去 Chrome 应用商店来一发五星好评！</a></li>
-          <li><span class="emoji">👨🏻‍💻</span>使用中碰到任何问题，<a href="https://github.com/imxfly/qiniu-kodo/issues/new" target="_blank">请在这里提交反馈</a><span
+          <li><span class="emoji">👨🏻‍💻</span>使用中碰到任何问题，<a class="point" href="https://github.com/imxfly/qiniu-kodo/issues/new" target="_blank">请在这里提交反馈</a><span
               style="color:#b9b9b9;">(当前版本:<span class="current_version">${current_version})</span><span>)</li>
-          <li><span class="emoji">🥳</span>Qiniu-Kodo 是托管于 GitHub 的开源项目，非常欢迎开发者<a href="https://github.com/imxfly/qiniu-kodo" target="_blank">一起完善</a>
+          <li><span class="emoji">🥳</span>Qiniu-Kodo 是托管于 GitHub 的开源项目，非常欢迎开发者<a class="point" href="https://github.com/imxfly/qiniu-kodo" target="_blank">一起完善</a>
           </li>
           <li><span class="emoji">😘</span><span class="donate">赞赏开发者</span></li>
         </ul>
@@ -46,6 +56,7 @@
     <div class="box">
       <h3>上传历史</h3>
       <div class="tip"><span class="emoji">💌</span>左击图片查看原图，右击图片删除本地图片！</div>
+      <div class="tip"><span class="emoji">⭐️</span>当前仅展示&nbsp;<span id="cur-key-name" class="point"></span>&nbsp;存储空间的本地上传历史～</div>
       <div class="files"></div>
     </div>
   </div>
@@ -176,7 +187,8 @@
       <td>
         <button class="btn btn-primary btn-small edit-key" data-id="{{id}}" type="button">编辑</button>
         <button class="btn btn-danger btn-small del-key" data-id="{{id}}" type="button">删除</button>
-        <button class="btn btn-info btn-small set-key" data-id="{{id}}" style="display: {{isNotDefault}}" type="button">设为默认</button>
+        <button class="btn btn-info btn-small view-history" data-id="{{id}}" data-bucket="{{bucket}}" type="button">查看历史</button>
+        <button class="btn btn-warning btn-small set-key" data-id="{{id}}" style="display: {{isNotDefault}}" type="button">设为默认</button>
       </td>
     </tr>
   </script>
