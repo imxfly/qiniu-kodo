@@ -19,11 +19,19 @@ Date.prototype.format = function (format) {
   return format;
 }
 
-function renderFiles() {
+function renderFiles(id) {
+  $(".loader-wrap").css('display', 'flex');
   let html = '';
+  const curKey = getDefaultKey();
+  if (id <= 0) {
+    id = curKey.id;
+  }
   let storageData = localStorage.kodo ? JSON.parse(localStorage.kodo) : [];
   let template = $('#image-item-template').html();
   for (let i = storageData.length - 1; i >= 0; i--) {
+    if (id != storageData[i].key_id) {
+      continue;
+    }
     let timestamp = storageData[i].date;
     let src = storageData[i].url;
     let d = new Date(timestamp);
@@ -36,6 +44,9 @@ function renderFiles() {
       .replace(/{{imgsrc}}/g, src);
   }
   $('.files').html(html);
+  setTimeout(() => {
+    $(".loader-wrap").fadeOut();
+  }, 500);
 }
 
 function renderKeys() {
@@ -72,6 +83,15 @@ function renderKeys() {
       .replace(/{{id}}/g, storageData[i].id);
   }
   $('#key-tbody').html(html);
+}
+
+function getDefaultKey() {
+  let keys = window.localStorage.kodo_keys ? JSON.parse(window.localStorage.kodo_keys) : [];
+  for (let i = 0; i < keys.length; i++) {
+    if (keys[i].is_default) {
+      return keys[i];
+    }
+  }
 }
 
 function removeItem(timestamp) {
@@ -182,8 +202,11 @@ function checkKey(key) {
 }
 
 $(document).ready(() => {
-  renderFiles();
+  renderFiles(0);
   renderKeys();
+
+  const curKey = getDefaultKey();
+  $('#cur-key-name').text(curKey.bucket);
 
   $(".current_version").text(chrome.runtime.getManifest().version);
 
@@ -285,6 +308,14 @@ $(document).ready(() => {
       setKey(id);
       renderKeys();
     }
+  });
+
+  // 查看历史
+  $('#key-table').on('click', '.view-history', function () {
+    const id = $(this).attr('data-id');
+    const bucket = $(this).attr('data-bucket');
+    $('#cur-key-name').text(bucket);
+    renderFiles(id);
   });
 
   // 删除密钥

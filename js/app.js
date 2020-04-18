@@ -1,6 +1,7 @@
 let storageData = window.localStorage.kodo ? JSON.parse(window.localStorage.kodo) : [];
 let keys = window.localStorage.kodo_keys ? JSON.parse(window.localStorage.kodo_keys) : [];
 
+let qiniuKeyID = 0;
 let qiniuAK = '';
 let qiniuSK = '';
 let qiniuRegion = '';
@@ -9,6 +10,7 @@ let qiniuBucket = '';
 let qiniuSavekey = '';
 for (let i = 0; i < keys.length; i++) {
   if (keys[i].is_default) {
+    qiniuKeyID = keys[i].id;
     qiniuAK = keys[i].ak;
     qiniuSK = keys[i].sk;
     qiniuSavekey = keys[i].savekey;
@@ -25,6 +27,7 @@ for (let i = 0; i < keys.length; i++) {
     } else if (keys[i].region == 'as0') {
       qiniuRegion = 'http://upload-as0.qiniup.com';
     }
+    break;
   }
 }
 
@@ -46,6 +49,7 @@ var base64DecodeChars = new Array(
 let kodo = {
   saveUrlToLocal: (url) => {
     storageData.push({
+      key_id: qiniuKeyID,
       date: (new Date()).getTime(),
       url: url
     });
@@ -278,9 +282,6 @@ $(() => {
     document.execCommand('copy');
     kodo.showMessage("提示", "复制成功");
   });
-
-  // kodo.renderFile("http://q8pq7hr77.bkt.clouddn.com/FhMqA0CzFK4c5xhlOds2Tw2HJ8Zj")
-  // kodo.renderFile("http://q8pq7hr77.bkt.clouddn.com/FhMqA0CzFK4c5xhlOds2Tw2HJ8Zj")
 
   // 监听拖拽图片事件
   // $("body").on('drop', (e) => {
