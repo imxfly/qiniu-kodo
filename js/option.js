@@ -26,14 +26,15 @@ function renderFiles(id) {
   if (id <= 0) {
     id = curKey.id;
   }
-  let storageData = localStorage.kodo ? JSON.parse(localStorage.kodo) : [];
+  let data = window.localStorage.getItem('kodo');
+  data = data ? JSON.parse(data) : [];
   let template = $('#image-item-template').html();
-  for (let i = storageData.length - 1; i >= 0; i--) {
-    if (id != storageData[i].key_id) {
+  for (let i = data.length - 1; i >= 0; i--) {
+    if (id != data[i].key_id) {
       continue;
     }
-    let timestamp = storageData[i].date;
-    let src = storageData[i].url;
+    let timestamp = data[i].date;
+    let src = data[i].url;
     let d = new Date(timestamp);
     if (!src.startsWith('http')) {
       continue;
@@ -51,11 +52,12 @@ function renderFiles(id) {
 
 function renderKeys() {
   let html = '';
-  let storageData = localStorage.kodo_keys ? JSON.parse(localStorage.kodo_keys) : [];
+  let data = window.localStorage.getItem('kodo_keys');
+  data = data ? JSON.parse(data) : [];
   let template = $('#key-item-template').html();
-  for (let i = storageData.length - 1; i >= 0; i--) {
+  for (let i = data.length - 1; i >= 0; i--) {
     let region = '无';
-    switch (storageData[i].region) {
+    switch (data[i].region) {
       case 'z0':
         region = '华东';
         break;
@@ -76,108 +78,106 @@ function renderKeys() {
     }
     html += template
       .replace(/{{region}}/g, region)
-      .replace(/{{bucket}}/g, storageData[i].bucket)
-      .replace(/{{domain}}/g, storageData[i].domain)
-      .replace(/{{isDefault}}/g, storageData[i].is_default ? 'inline-block' : 'none')
-      .replace(/{{isNotDefault}}/g, storageData[i].is_default ? 'none' : 'inline-block')
-      .replace(/{{id}}/g, storageData[i].id);
+      .replace(/{{bucket}}/g, data[i].bucket)
+      .replace(/{{domain}}/g, data[i].domain)
+      .replace(/{{isDefault}}/g, data[i].is_default ? 'inline-block' : 'none')
+      .replace(/{{isNotDefault}}/g, data[i].is_default ? 'none' : 'inline-block')
+      .replace(/{{id}}/g, data[i].id);
   }
   $('#key-tbody').html(html);
 }
 
 function getDefaultKey() {
-  let keys = window.localStorage.kodo_keys ? JSON.parse(window.localStorage.kodo_keys) : [];
-  for (let i = 0; i < keys.length; i++) {
-    if (keys[i].is_default) {
-      return keys[i];
+  let data = window.localStorage.getItem('kodo_keys');
+  data = data ? JSON.parse(data) : [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].is_default) {
+      return data[i];
     }
   }
 }
 
 function removeItem(timestamp) {
-  let storageData = localStorage.kodo ? JSON.parse(localStorage.kodo) : [];
-  for (let i = 0; i < storageData.length; i++) {
-    if (timestamp == storageData[i].date) {
-      storageData.splice(i, 1);
-      localStorage.kodo = JSON.stringify(storageData);
+  let data = window.localStorage.getItem('kodo');
+  data = data ? JSON.parse(data) : [];
+  for (let i = 0; i < data.length; i++) {
+    if (timestamp == data[i].date) {
+      data.splice(i, 1);
+      window.localStorage.setItem('kodo', JSON.stringify(data));
       return;
     }
   }
 }
 
-function addNewKey(key) {
-  let keys = window.localStorage.getItem('kodo_keys');
-  if (keys == null) {
-    keys = [];
-  } else {
-    keys = JSON.parse(keys);
+function removeItems(id) {
+  let data = window.localStorage.getItem('kodo');
+  data = data ? JSON.parse(data) : [];
+  let result = [];
+  for (let i = 0; i < data.length; i++) {
+    if (id != data[i].key_id) {
+      result.push(data[i]);
+    }
   }
+  window.localStorage.setItem('kodo', JSON.stringify(result));
+}
 
-  key.id = keys.length + 1;
-  key.is_default = keys.length == 0 ? true : false;
-  keys.push(key);
-  window.localStorage.setItem('kodo_keys', JSON.stringify(keys));
+function addNewKey(key) {
+  let data = window.localStorage.getItem('kodo_keys');
+  data = data ? JSON.parse(data) : [];
+
+  key.id = data.length + 1;
+  key.is_default = data.length == 0 ? true : false;
+  data.push(key);
+  window.localStorage.setItem('kodo_keys', JSON.stringify(data));
 }
 
 function updateKey(key) {
-  let keys = window.localStorage.getItem('kodo_keys');
-  if (keys == null || keys.length == 0) {
-    keys = [];
-  } else {
-    keys = JSON.parse(keys);
-  }
+  let data = window.localStorage.getItem('kodo_keys');
+  data = data ? JSON.parse(data) : [];
 
-  for (let i = 0; i < keys.length; i++) {
-    if (keys[i].id == key.id) {
-      key.is_default = keys[i].is_default;
-      keys[i] = key;
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].id == key.id) {
+      key.is_default = data[i].is_default;
+      data[i] = key;
     }
   }
 
-  window.localStorage.setItem('kodo_keys', JSON.stringify(keys));
+  window.localStorage.setItem('kodo_keys', JSON.stringify(data));
 }
 
 function getKey(id) {
-  let keys = window.localStorage.getItem('kodo_keys');
-  if (keys == null || keys.length == 0) {
-    return [];
-  }
-  keys = JSON.parse(keys);
-  for (let i = 0; i < keys.length; i++) {
-    if (keys[i].id == id) {
-      return keys[i];
+  let data = window.localStorage.getItem('kodo_keys');
+  data = data ? JSON.parse(data) : [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].id == id) {
+      return data[i];
     }
   }
 }
 
 function setKey(id) {
-  let keys = window.localStorage.getItem('kodo_keys');
-  if (keys == null || keys.length == 0) {
-    return;
-  }
-  keys = JSON.parse(keys);
-  for (let i = 0; i < keys.length; i++) {
-    if (keys[i].id == id) {
-      keys[i].is_default = true;
+  let data = window.localStorage.getItem('kodo_keys');
+  data = data ? JSON.parse(data) : [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].id == id) {
+      data[i].is_default = true;
     } else {
-      keys[i].is_default = false;
+      data[i].is_default = false;
     }
   }
-  window.localStorage.setItem('kodo_keys', JSON.stringify(keys));
+  window.localStorage.setItem('kodo_keys', JSON.stringify(data));
 }
 
 function delKey(id) {
-  let keys = window.localStorage.getItem('kodo_keys');
-  if (keys == null || keys.length == 0) {
-    return;
-  }
-  keys = JSON.parse(keys);
-  for (let i = 0; i < keys.length; i++) {
-    if (keys[i].id == id) {
-      keys.splice(i, 1);
+  let data = window.localStorage.getItem('kodo_keys');
+  data = data ? JSON.parse(data) : [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].id == id) {
+      data.splice(i, 1);
+      window.localStorage.setItem('kodo_keys', JSON.stringify(data));
+      return;
     }
   }
-  window.localStorage.setItem('kodo_keys', JSON.stringify(keys));
 }
 
 function checkKey(key) {
@@ -206,6 +206,7 @@ $(document).ready(() => {
   renderKeys();
 
   const curKey = getDefaultKey();
+  $('#btn-batch-delete').attr('data-id', curKey.id);
   $('#cur-key-name').text(curKey.bucket);
 
   $(".current_version").text(chrome.runtime.getManifest().version);
@@ -304,8 +305,7 @@ $(document).ready(() => {
   // 设为默认
   $('#key-table').on('click', '.set-key', function () {
     if (window.confirm("确定要将该密钥设为默认密钥吗？")) {
-      const id = $(this).attr('data-id');
-      setKey(id);
+      setKey($(this).attr('data-id'));
       renderKeys();
     }
   });
@@ -314,6 +314,7 @@ $(document).ready(() => {
   $('#key-table').on('click', '.view-history', function () {
     const id = $(this).attr('data-id');
     const bucket = $(this).attr('data-bucket');
+    $('#btn-batch-delete').attr('data-id', id);
     $('#cur-key-name').text(bucket);
     renderFiles(id);
   });
@@ -321,9 +322,16 @@ $(document).ready(() => {
   // 删除密钥
   $('#key-table').on('click', '.del-key', function () {
     if (window.confirm("确定要删除该密钥吗？")) {
-      const id = $(this).attr('data-id');
-      delKey(id);
+      delKey($(this).attr('data-id'));
       $(this).parent().parent().remove();
+    }
+  });
+
+  // 一键清空当前选中上传历史
+  $('#btn-batch-delete').on('click', function () {
+    if (window.confirm("确定要清空当前空间的上传历史吗？")) {
+      removeItems($(this).attr('data-id'));
+      renderFiles($(this).attr('data-id'));
     }
   });
 });

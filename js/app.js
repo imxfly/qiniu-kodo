@@ -49,7 +49,7 @@ var base64DecodeChars = new Array(
 let kodo = {
   saveUrlToLocal: (url) => {
     storageData.push({
-      key_id: qiniuKeyID,
+      key_id: parseInt(qiniuKeyID),
       date: (new Date()).getTime(),
       url: url
     });

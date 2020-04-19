@@ -22,6 +22,12 @@ body {
   border-radius: 5px;
 }
 
+.box .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .files {
   display: flex;
   align-items: center;
