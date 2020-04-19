@@ -24,11 +24,14 @@
       <div class="tips">
         <ul>
           <li><span class="emoji">❤️</span>喜欢这个扩展程序? &nbsp;
-            <a class="point" href="https://chrome.google.com/webstore/detail/qiniu-kodo/bolbippiiidndpgbljehocikgcepghja/reviews"
+            <a class="point"
+              href="https://chrome.google.com/webstore/detail/qiniu-kodo/bolbippiiidndpgbljehocikgcepghja/reviews"
               target="_blank">欢迎去 Chrome 应用商店来一发五星好评！</a></li>
-          <li><span class="emoji">👨🏻‍💻</span>使用中碰到任何问题，<a class="point" href="https://github.com/imxfly/qiniu-kodo/issues/new" target="_blank">请在这里提交反馈</a><span
+          <li><span class="emoji">👨🏻‍💻</span>使用中碰到任何问题，<a class="point"
+              href="https://github.com/imxfly/qiniu-kodo/issues/new" target="_blank">请在这里提交反馈</a><span
               style="color:#b9b9b9;">(当前版本:<span class="current_version">${current_version})</span><span>)</li>
-          <li><span class="emoji">🥳</span>Qiniu-Kodo 是托管于 GitHub 的开源项目，非常欢迎开发者<a class="point" href="https://github.com/imxfly/qiniu-kodo" target="_blank">一起完善</a>
+          <li><span class="emoji">🥳</span>Qiniu-Kodo 是托管于 GitHub 的开源项目，非常欢迎开发者<a class="point"
+              href="https://github.com/imxfly/qiniu-kodo" target="_blank">一起完善</a>
           </li>
           <li><span class="emoji">😘</span><span class="donate">赞赏开发者</span></li>
         </ul>
@@ -37,16 +40,16 @@
     <div class="keys">
       <div class="header">
         <h3>密钥管理</h3>
-        <button id="btn-create" class="btn btn-success btn-small" type="button">新增</button>
+        <button id="btn-create" class="btn btn-success btn-medium" type="button">新增密钥</button>
       </div>
       <div class="body">
         <table id="key-table">
           <thead>
             <tr>
-              <td>存储空间区域</td>
-              <td>存储空间名称</td>
-              <td>存储空间绑定域名</td>
-              <td>操作</td>
+              <td width="20%">空间区域</td>
+              <td width="25%">空间名称</td>
+              <td width="25%">空间域名</td>
+              <td width="30%">操作</td>
             </tr>
           </thead>
           <tbody id="key-tbody"></tbody>
@@ -54,9 +57,13 @@
       </div>
     </div>
     <div class="box">
-      <h3>上传历史</h3>
+      <div class="header">
+        <h3>上传历史</h3>
+        <button id="btn-batch-delete" class="btn btn-danger btn-medium" type="button">一键清除</button>
+      </div>
       <div class="tip"><span class="emoji">💌</span>左击图片查看原图，右击图片删除本地图片！</div>
-      <div class="tip"><span class="emoji">⭐️</span>当前仅展示&nbsp;<span id="cur-key-name" class="point"></span>&nbsp;存储空间的本地上传历史～</div>
+      <div class="tip"><span class="emoji">⭐️</span>当前仅展示&nbsp;<span id="cur-key-name"
+          class="point"></span>&nbsp;存储空间的本地上传历史～</div>
       <div class="files"></div>
     </div>
   </div>
@@ -96,19 +103,19 @@
           <label for="key-region">存储空间区域</label>
           <div class="radio-group" id="key-region">
             <label class="radio-btn">
-              <input type="radio" name="region" checked value="z0"/> <span>华东</span>
+              <input type="radio" name="region" checked value="z0" /> <span>华东</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="region" value="z1"/> <span>华北</span>
+              <input type="radio" name="region" value="z1" /> <span>华北</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="region" value="z2"/> <span>华南</span>
+              <input type="radio" name="region" value="z2" /> <span>华南</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="region" value="na0"/> <span>北美</span>
+              <input type="radio" name="region" value="na0" /> <span>北美</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="region" value="as0"/> <span>东南亚</span>
+              <input type="radio" name="region" value="as0" /> <span>东南亚</span>
             </label>
           </div>
         </div>
@@ -148,19 +155,19 @@
           <label for="edit-key-region">存储空间区域</label>
           <div class="radio-group" id="edit-key-region">
             <label class="radio-btn">
-              <input type="radio" name="edit-region" value="z0"/> <span>华东</span>
+              <input type="radio" name="edit-region" value="z0" /> <span>华东</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="edit-region" value="z1"/> <span>华北</span>
+              <input type="radio" name="edit-region" value="z1" /> <span>华北</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="edit-region" value="z2"/> <span>华南</span>
+              <input type="radio" name="edit-region" value="z2" /> <span>华南</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="edit-region" value="na0"/> <span>北美</span>
+              <input type="radio" name="edit-region" value="na0" /> <span>北美</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="edit-region" value="as0"/> <span>东南亚</span>
+              <input type="radio" name="edit-region" value="as0" /> <span>东南亚</span>
             </label>
           </div>
         </div>
@@ -192,7 +199,7 @@
       </td>
     </tr>
   </script>
-  
+
   <script id="image-item-template" type="template">
     <div class="file-item">
         <a class="file-preview" href="{{imgsrc}}" target="_blank" data-date="{{timestamp}}">
