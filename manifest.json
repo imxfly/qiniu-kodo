@@ -1,6 +1,6 @@
 {
   "name": "Qiniu Kodo",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "简单好用的七牛文件上传工具，支持选择/拖拽/粘贴上传图片，支持多空间管理，支持浏览历史记录",
   "permissions": [
     "storage",
