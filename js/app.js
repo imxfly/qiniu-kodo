@@ -1,42 +1,3 @@
-let storageData = window.localStorage.kodo ? JSON.parse(window.localStorage.kodo) : [];
-let keys = window.localStorage.kodo_keys ? JSON.parse(window.localStorage.kodo_keys) : [];
-
-let qiniuKeyID = 0;
-let qiniuAK = '';
-let qiniuSK = '';
-let qiniuRegion = '';
-let cdnDomain = ''
-let qiniuBucket = '';
-let qiniuSavekey = '';
-for (let i = 0; i < keys.length; i++) {
-  if (keys[i].is_default) {
-    qiniuKeyID = keys[i].id;
-    qiniuAK = keys[i].ak;
-    qiniuSK = keys[i].sk;
-    qiniuSavekey = keys[i].savekey;
-    qiniuBucket = keys[i].bucket;
-    cdnDomain = keys[i].domain;
-    if (keys[i].region == 'z0') {
-      qiniuRegion = 'http://upload.qiniup.com';
-    } else if (keys[i].region == 'z1') {
-      qiniuRegion = 'http://upload-z1.qiniup.com';
-    } else if (keys[i].region == 'z2') {
-      qiniuRegion = 'http://upload-z2.qiniup.com';
-    } else if (keys[i].region == 'na0') {
-      qiniuRegion = 'http://upload-na0.qiniup.com';
-    } else if (keys[i].region == 'as0') {
-      qiniuRegion = 'http://upload-as0.qiniup.com';
-    }
-    break;
-  }
-}
-
-let qiniuPutPolicy = {
-  scope: qiniuBucket,
-  deadline: parseInt((new Date()).getTime() / 1000) + 3600,
-  saveKey: qiniuSavekey
-}
-
 var base64EncodeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 var base64DecodeChars = new Array(
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -47,9 +8,25 @@ var base64DecodeChars = new Array(
 );
 
 let kodo = {
+  getDefaultKey: () => {
+    let keys = window.localStorage.kodo_keys ? JSON.parse(window.localStorage.kodo_keys) : [];
+    for (let i = 0; i < keys.length; i++) {
+      if (keys[i].is_default) {
+        if (keys[i].region === 'z0') {
+          keys[i].region = 'http://upload.qiniup.com';
+        } else {
+          keys[i].region = 'http://upload-' + keys[i].region + '.qiniup.com';
+        }
+        return keys[i];
+      }
+    }
+    return [];
+  },
   saveUrlToLocal: (url) => {
+    let storageData = window.localStorage.kodo ? JSON.parse(window.localStorage.kodo) : []
+    let defaultKey = kodo.getDefaultKey();
     storageData.push({
-      key_id: parseInt(qiniuKeyID),
+      key_id: parseInt(defaultKey.id),
       date: (new Date()).getTime(),
       url: url
     });
@@ -57,42 +34,48 @@ let kodo = {
   },
 
   renderFile: (url) => {
-    str = '\
-          <div class="file-item">\
-            <input class="file-url" value="'+ url + '"/>\
-            <img class="file-preview" src="'+ url + '" alt="">\
-          </div>';
-    $('.files').append(str);
+    let div = document.createElement('div');
+    div.className = 'file-item';
+    div.innerHTML = '<input class="file-url" value="' + url + '"/>\
+      <img class="file-preview" src="'+ url + '" alt="">';
+    div.addEventListener('click', () => {
+      let input = div.firstChild;
+      input.select();
+      document.execCommand('copy');
+      kodo.showMessage("提示", "复制成功");
+    });
+    document.getElementsByClassName('files')[0].appendChild(div);
   },
 
   uploadFile: (files) => {
-    $(".loader-wrap").css('display', 'flex');
+    document.getElementsByClassName('loader-wrap')[0].style.display = 'flex';
+    let defaultKey = kodo.getDefaultKey();
+    let qiniuPutPolicy = {
+      scope: defaultKey.bucket,
+      deadline: parseInt((new Date()).getTime() / 1000) + 3600,
+      saveKey: defaultKey.savekey
+    }
     for (let i = 0; i < files.length; i++) {
       let formData = new FormData();
-      formData.append('token', kodo.genUpToken(qiniuAK, qiniuSK, qiniuPutPolicy))
+      formData.append('token', kodo.genUpToken(defaultKey.ak, defaultKey.sk, qiniuPutPolicy))
       formData.append('file', files[i])
 
-      $.ajax({
-        type: "POST",
-        cache: false,
-        processData: false,
-        contentType: false,
-        url: qiniuRegion,
-        data: formData,
-        complete: () => {
-          if (i == files.length - 1) {
-            $(".loader-wrap").fadeOut("fast");
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', defaultKey.region, true);
+      xhr.send(formData);
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 0 || (xhr.status >= 200 && xhr.status < 400)) {
+            const data = JSON.parse(xhr.responseText)
+            const url = defaultKey.domain + '/' + data.key;
+            kodo.saveUrlToLocal(url);
+            kodo.renderFile(url);
+          } else {
+            console.log(err)
           }
-        },
-        success: (data) => {
-          let url = cdnDomain + '/' + data.key;
-          kodo.saveUrlToLocal(url);
-          kodo.renderFile(url);
-        },
-        error: (err) => {
-          console.log(err)
+          document.getElementsByClassName('loader-wrap')[0].style.display = 'none';
         }
-      });
+      };
     }
   },
 
@@ -111,43 +94,6 @@ let kodo = {
       } else {
         out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
         out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
-      }
-    }
-    return out;
-  },
-
-  utf8to16: (str) => {
-    var out, i, len, c;
-    var char2, char3;
-    out = "";
-    len = str.length;
-    i = 0;
-    while (i < len) {
-      c = str.charCodeAt(i++);
-      switch (c >> 4) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-          // 0xxxxxxx
-          out += str.charAt(i - 1);
-          break;
-        case 12:
-        case 13:
-          // 110x xxxx 10xx xxxx
-          char2 = str.charCodeAt(i++);
-          out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
-          break;
-        case 14:
-          // 1110 xxxx 10xx xxxx 10xx xxxx
-          char2 = str.charCodeAt(i++);
-          char3 = str.charCodeAt(i++);
-          out += String.fromCharCode(((c & 0x0F) << 12) | ((char2 & 0x3F) << 6) | ((char3 & 0x3F) << 0));
-          break;
       }
     }
     return out;
@@ -184,44 +130,6 @@ let kodo = {
     return out;
   },
 
-  base64decode: (str) => {
-    var c1, c2, c3, c4;
-    var i, len, out;
-    len = str.length;
-    i = 0;
-    out = "";
-    while (i < len) {
-      /* c1 */
-      do {
-        c1 = base64DecodeChars[str.charCodeAt(i++) & 0xff];
-      } while (i < len && c1 == -1);
-      if (c1 == -1) break;
-      /* c2 */
-      do {
-        c2 = base64DecodeChars[str.charCodeAt(i++) & 0xff];
-      } while (i < len && c2 == -1);
-      if (c2 == -1) break;
-      out += String.fromCharCode((c1 << 2) | ((c2 & 0x30) >> 4));
-      /* c3 */
-      do {
-        c3 = str.charCodeAt(i++) & 0xff;
-        if (c3 == 61) return out;
-        c3 = base64DecodeChars[c3];
-      } while (i < len && c3 == -1);
-      if (c3 == -1) break;
-      out += String.fromCharCode(((c2 & 0XF) << 4) | ((c3 & 0x3C) >> 2));
-      /* c4 */
-      do {
-        c4 = str.charCodeAt(i++) & 0xff;
-        if (c4 == 61) return out;
-        c4 = base64DecodeChars[c4];
-      } while (i < len && c4 == -1);
-      if (c4 == -1) break;
-      out += String.fromCharCode(((c3 & 0x03) << 6) | c4);
-    }
-    return out;
-  },
-
   safe64: (base64) => {
     base64 = base64.replace(/\+/g, "-");
     base64 = base64.replace(/\//g, "_");
@@ -251,41 +159,43 @@ let kodo = {
   }
 };
 
-$(() => {
-  if (keys.length < 1) {
+window.onload = () => {
+  if (!window.localStorage.kodo_keys) {
     alert('请先设置密钥');
     chrome.tabs.create({ url: chrome.extension.getURL('option.html') });
   }
 
   // 前往 option.html
-  $("#btn-option").on('click', () => {
+  document.getElementById('btn-option').addEventListener('click', () => {
     chrome.tabs.create({ url: chrome.extension.getURL('option.html') });
-  });
+  })
 
   // 点击上传区域触发上传按钮
-  $('.placeholder').click((e) => {
+  document.getElementsByClassName('placeholder')[0].addEventListener('click', (e) => {
     e.preventDefault();
-    $('input[name=file]').click();
+    document.getElementById('input').click();
   })
 
   // 监听上传按钮变化
-  $('input[name=file]').change((e) => {
+  document.getElementById('input').addEventListener('change', (e) => {
     e.preventDefault();
     var files = document.getElementById('input').files;
     kodo.uploadFile(files);
   });
 
-  $(".files").on("click", ".file-preview", function () {
-    event.preventDefault();
-    let input = $(this).prev();
-    $(input[0]).select();
-    document.execCommand('copy');
-    kodo.showMessage("提示", "复制成功");
-  });
+  let els = document.getElementsByClassName('file-item');
+  for (let i = 0; i < els.length; i++) {
+    els[i].addEventListener('click', () => {
+      let input = els[i].firstChild;
+      input.select();
+      document.execCommand('copy');
+      kodo.showMessage("提示", "复制成功");
+    });
+  }
 
   // 监听拖拽图片事件
   // $("body").on('drop', (e) => {
   //   e.preventDefault(); // 取消默认浏览器拖拽效果
   //   kodo.getImageFile(e.originalEvent.dataTransfer.files);
   // });
-});
+};
