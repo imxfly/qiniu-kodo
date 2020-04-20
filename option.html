@@ -29,7 +29,7 @@
               target="_blank">欢迎去 Chrome 应用商店来一发五星好评！</a></li>
           <li><span class="emoji">👨🏻‍💻</span>使用中碰到任何问题，<a class="point"
               href="https://github.com/imxfly/qiniu-kodo/issues/new" target="_blank">请在这里提交反馈</a><span
-              style="color:#b9b9b9;">(当前版本:<span class="current_version">${current_version})</span><span>)</li>
+              style="color:#b9b9b9;">(当前版本:<span id="version">${current_version})</span><span>)</li>
           <li><span class="emoji">🥳</span>Qiniu-Kodo 是托管于 GitHub 的开源项目，非常欢迎开发者<a class="point"
               href="https://github.com/imxfly/qiniu-kodo" target="_blank">一起完善</a>
           </li>
@@ -70,7 +70,7 @@
 
   <!-- 赞赏对话框 -->
   <div class="dialog" id="donate-dialog">
-    <div class="body">
+    <div class="body" id="donate-dialog-body">
       <div class="title">扫码赞赏</div>
       <div class="info">
         <div class="imgs">
@@ -84,48 +84,48 @@
 
   <!-- 新增密钥弹窗 -->
   <div class="dialog" id="add-key-dialog">
-    <div class="body">
+    <div class="body" id="add-key-dialog-body">
       <div class="title">新增密钥</div>
       <div class="info">
         <div class="form-item">
-          <label for="key-ak">Access Key(AK)</label>
-          <input type="text" id="key-ak" name="ak" />
+          <label for="add-key-ak">Access Key(AK)</label>
+          <input type="text" id="add-key-ak" name="ak" />
         </div>
         <div class="form-item">
-          <label for="key-sk">Secret Key(SK)</label>
-          <input type="text" id="key-sk" name="sk" />
+          <label for="add-key-sk">Secret Key(SK)</label>
+          <input type="text" id="add-key-sk" name="sk" />
         </div>
         <div class="form-item">
-          <label for="key-bucket">存储空间名称</label>
-          <input type="text" id="key-bucket" name="bucket" />
+          <label for="add-key-bucket">存储空间名称</label>
+          <input type="text" id="add-key-bucket" name="bucket" />
         </div>
         <div class="form-item">
-          <label for="key-region">存储空间区域</label>
-          <div class="radio-group" id="key-region">
+          <label for="add-key-region">存储空间区域</label>
+          <div class="radio-group" id="add-key-region">
             <label class="radio-btn">
-              <input type="radio" name="region" checked value="z0" /> <span>华东</span>
+              <input type="radio" name="region" class="add-key-region" checked value="z0" /> <span>华东</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="region" value="z1" /> <span>华北</span>
+              <input type="radio" name="region" class="add-key-region" value="z1" /> <span>华北</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="region" value="z2" /> <span>华南</span>
+              <input type="radio" name="region" class="add-key-region" value="z2" /> <span>华南</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="region" value="na0" /> <span>北美</span>
+              <input type="radio" name="region" class="add-key-region" value="na0" /> <span>北美</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="region" value="as0" /> <span>东南亚</span>
+              <input type="radio" name="region" class="add-key-region" value="as0" /> <span>东南亚</span>
             </label>
           </div>
         </div>
         <div class="form-item">
-          <label for="key-savekey">SaveKey(Optional)</label>
-          <input type="text" id="key-savekey" name="savekey" value="$(year)$(mon)$(day)/$(etag)$(ext)" />
+          <label for="add-key-savekey">SaveKey(Optional)</label>
+          <input type="text" id="add-key-savekey" name="savekey" value="$(year)$(mon)$(day)/$(etag)$(ext)" />
         </div>
         <div class="form-item">
-          <label for="key-domain">存储空间绑定域名</label>
-          <input type="text" id="key-domain" name="domain" />
+          <label for="add-key-domain">存储空间绑定域名</label>
+          <input type="text" id="add-key-domain" name="domain" />
         </div>
       </div>
       <div class="footer">
@@ -136,7 +136,7 @@
 
   <!-- 编辑密钥弹窗 -->
   <div class="dialog" id="edit-key-dialog">
-    <div class="body">
+    <div class="body" id="edit-key-body">
       <div class="title">编辑密钥</div>
       <div class="info">
         <div class="form-item">
@@ -155,19 +155,19 @@
           <label for="edit-key-region">存储空间区域</label>
           <div class="radio-group" id="edit-key-region">
             <label class="radio-btn">
-              <input type="radio" name="edit-region" value="z0" /> <span>华东</span>
+              <input type="radio" name="edit-key-region" class="edit-key-region" value="z0" /> <span>华东</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="edit-region" value="z1" /> <span>华北</span>
+              <input type="radio" name="edit-key-region" class="edit-key-region" value="z1" /> <span>华北</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="edit-region" value="z2" /> <span>华南</span>
+              <input type="radio" name="edit-key-region" class="edit-key-region" value="z2" /> <span>华南</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="edit-region" value="na0" /> <span>北美</span>
+              <input type="radio" name="edit-key-region" class="edit-key-region" value="na0" /> <span>北美</span>
             </label>
             <label class="radio-btn">
-              <input type="radio" name="edit-region" value="as0" /> <span>东南亚</span>
+              <input type="radio" name="edit-key-region" class="edit-key-region" value="as0" /> <span>东南亚</span>
             </label>
           </div>
         </div>
@@ -201,14 +201,13 @@
   </script>
 
   <script id="image-item-template" type="template">
-    <div class="file-item">
-        <a class="file-preview" href="{{imgsrc}}" target="_blank" data-date="{{timestamp}}">
+    <div class="file-item" data-date="{{timestamp}}">
+        <a class="file-preview" href="{{imgsrc}}" target="_blank">
           <img src="{{imgsrc}}" alt="">
         </a>
         <div class="file-time">{{date}}</div>
     </div>
   </script>
-  <script src="js/jquery.min.js"></script>
   <script src="js/option.js"></script>
 </body>
 
