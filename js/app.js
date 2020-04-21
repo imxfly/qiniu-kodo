@@ -206,17 +206,28 @@ window.onload = () => {
   document.body.addEventListener('drop', (e) => {
     e.preventDefault();
     let fileList = e.dataTransfer.files;
-
-    //检测是否是拖拽文件到页面的操作
+    // 检测是否是拖拽文件到页面的操作
     if (fileList.length == 0) {
       return;
     }
-
-    //检测文件是不是图片
-    if (fileList[0].type.indexOf("image") === -1) {
-      return;
+    // 检测文件是不是图片
+    for (let i = 0; i < fileList.length; i++) {
+      if (fileList[i].type.indexOf("image") === -1) {
+        continue;
+      }
+      kodo.uploadFile([fileList[i]]);
     }
-
-    kodo.uploadFile(fileList);
   }, false);
+
+  // 监听复制图片事件
+  document.addEventListener('paste', function (event) {
+    let items = event.clipboardData && event.clipboardData.items;
+    if (items && items.length) {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          kodo.uploadFile([items[i].getAsFile()]);
+        }
+      }
+    }
+  });
 };
