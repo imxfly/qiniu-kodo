@@ -194,8 +194,29 @@ window.onload = () => {
   }
 
   // 监听拖拽图片事件
-  // $("body").on('drop', (e) => {
-  //   e.preventDefault(); // 取消默认浏览器拖拽效果
-  //   kodo.getImageFile(e.originalEvent.dataTransfer.files);
-  // });
+  document.body.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+  }, false);
+  document.body.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+  }, false);
+  document.body.addEventListener("dragover", (e) => {
+    e.preventDefault();
+  }, false);
+  document.body.addEventListener('drop', (e) => {
+    e.preventDefault();
+    let fileList = e.dataTransfer.files;
+
+    //检测是否是拖拽文件到页面的操作
+    if (fileList.length == 0) {
+      return;
+    }
+
+    //检测文件是不是图片
+    if (fileList[0].type.indexOf("image") === -1) {
+      return;
+    }
+
+    kodo.uploadFile(fileList);
+  }, false);
 };
