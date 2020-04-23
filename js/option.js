@@ -154,6 +154,11 @@ function getDefaultKey() {
       return data[i];
     }
   }
+
+  return {
+    id: 0,
+    bucket: '无'
+  }
 }
 
 function removeItem(timestamp) {
