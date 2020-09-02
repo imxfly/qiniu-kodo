@@ -159,11 +159,29 @@ let kodo = {
   }
 };
 
+function getDefaultKey() {
+  let data = window.localStorage.getItem('kodo_keys');
+  data = data ? JSON.parse(data) : [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].is_default) {
+      return data[i];
+    }
+  }
+
+  return {
+    id: 0,
+    bucket: '无'
+  }
+}
+
 window.onload = () => {
   if (!window.localStorage.kodo_keys) {
     alert('请先设置密钥');
     chrome.tabs.create({ url: chrome.extension.getURL('option.html') });
   }
+
+  const kodoBucket = getDefaultKey().bucket;
+  document.getElementById('bucketName').textContent = kodoBucket;
 
   // 前往 option.html
   document.getElementById('btn-option').addEventListener('click', () => {
